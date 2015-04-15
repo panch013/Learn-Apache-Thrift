@@ -11,13 +11,13 @@ class LBHandler:
     self.port = port
     self.file_ = file_
 
-  def shrink_file(self, file_, n):
+  def shrink_file(self, n):
     print("[Server]: Handling Shrink request")
     try:
-      fileObject = open(file_, "rw+")
-      print("[Server]: File Opened: ", file_)
+      fileObject = open(self.file_, "rw+")
+      print("[Server]: File Opened: ", self.file_)
     except IOError:
-      print ("[Server]: File '{file_}' Does not Exist")
+      print ("[Server]: File '{self.file_}' Does not Exist")
    
     lastNlines = fileObject.readlines()[-n:]
     fileObject.seek(0,2) 
@@ -28,27 +28,28 @@ class LBHandler:
     print("[Server]: Done Shrinking")
     return lastNlines 
 
-  def prepend_file(self, file_, lastNlines): 
+  def prepend_file(self, lastNlines): 
     print("[Server]: Handling Prepend request")
     try:
-      fileObject = open(file_, "rw+")
-      print("[Server]: File Opened: ", file_)
+      fileObject = open(self.file_, "rw+")
+      print("[Server]: File Opened: ", self.file_)
       old_data = fileObject.read() 
       fileObject.close()
     except IOError:
-      print ("[Server]: File '{file_}' Does not Exist")
-      print ("[Server]: Opening a new File '{file_}'")
-      fileObject = open(file_, "w")
+      print ("[Server]: File '{self.file_}' Does not Exist")
+      print ("[Server]: Opening a new File '{self.file_}'")
+      fileObject = open(self.file_, "w")
 
-    fileObject = open(file_, "rw+")
+    fileObject = open(self.file_, "rw+")
     for line in lastNlines:
       fileObject.write(line)
     fileObject.write(old_data)
     fileObject.close()
+    print("[Server]: Done Prepending")
 
   #TODO Remove a_port?
   def load_balance(self, a_port, n, b_port):
-    lastNlines = self.shrink_file(self.file_, n)
+    lastNlines = self.shrink_file(n)
 
     print("[Server]: lastNlines")
     print lastNlines
@@ -59,7 +60,7 @@ class LBHandler:
     trans_ep.open() 
     print ("[Server]: Established Connection with port: ", b_port)
     
-    #client.prepend_file(client.file_, lastNlines)   
+    client.prepend_file(lastNlines)   
  
     print("[Server]: Done Load Balancing")
     trans_ep.close() 
