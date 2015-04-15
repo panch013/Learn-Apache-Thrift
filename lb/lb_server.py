@@ -7,6 +7,10 @@ from thrift.protocol import TBinaryProtocol
 from thrift.server import TServer 
 
 class LBHandler: 
+  def __init__(self, port, file_):
+    self.port = port
+    self.file_ = file_
+
   def shrink_file(self, file_, n):
     print("[Server]: Handling Shrink request")
     try:
@@ -40,15 +44,15 @@ class LBHandler:
     fileObject.write(old_data)
     fileObject.close()
 
-  def load_balance(self, a_port, a_file, n, b_port, b_file):
-    lastNlines = self.shrink_file(a_file, n)
+  def load_balance(self, a_port, n, b_port, b_file):
+    lastNlines = self.shrink_file(self.file_, n)
     self.prepend_file(b_file, lastNlines)
     print("[Server]: Done Load Balancing")
 
-handler = LBHandler() 
+handler = LBHandler(argv[1], argv[2]) 
 proc = LBSvc.Processor(handler) 
 
-trans_ep = TSocket.TServerSocket(port=9095) 
+trans_ep = TSocket.TServerSocket(port=handler.port) 
 trans_fac = TTransport.TBufferedTransportFactory() 
 proto_fac = TBinaryProtocol.TBinaryProtocolFactory() 
 server = TServer.TSimpleServer(proc, trans_ep, trans_fac, proto_fac) 
