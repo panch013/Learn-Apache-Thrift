@@ -15,22 +15,24 @@ class LBHandler:
     print("[Server]: Handling Shrink request")
     try:
       fileObject = open(file_, "rw+")
-      print("[Server]: File Opened")
+      print("[Server]: File Opened: ", file_)
     except IOError:
       print ("[Server]: File '{file_}' Does not Exist")
    
     lastNlines = fileObject.readlines()[-n:]
     fileObject.seek(0,2) 
     size = fileObject.tell()
-    fileObject.truncate(size-n + 1)
+    print("[Server]: Size of the file: ", size)
+    fileObject.truncate(size-n)
     fileObject.close() 
+    print("[Server]: Done Shrinking")
     return lastNlines 
 
   def prepend_file(self, file_, lastNlines): 
     print("[Server]: Handling Prepend request")
     try:
       fileObject = open(file_, "rw+")
-      print("[Server]: File Opened")
+      print("[Server]: File Opened: ", file_)
       old_data = fileObject.read() 
       fileObject.close()
     except IOError:
@@ -44,12 +46,25 @@ class LBHandler:
     fileObject.write(old_data)
     fileObject.close()
 
-  def load_balance(self, a_port, n, b_port, b_file):
+  #TODO Remove a_port?
+  def load_balance(self, a_port, n, b_port):
     lastNlines = self.shrink_file(self.file_, n)
-    self.prepend_file(b_file, lastNlines)
-    print("[Server]: Done Load Balancing")
 
-handler = LBHandler(argv[1], argv[2]) 
+    print("[Server]: lastNlines")
+    print lastNlines
+    trans_ep = TSocket.TSocket("localhost", b_port) 
+    trans_buf = TTransport.TBufferedTransport(trans_ep) 
+    proto = TBinaryProtocol.TBinaryProtocol(trans_buf) 
+    client = LBSvc.Client(proto) 
+    trans_ep.open() 
+    print ("[Server]: Established Connection with port: ", b_port)
+    
+    #client.prepend_file(client.file_, lastNlines)   
+ 
+    print("[Server]: Done Load Balancing")
+    trans_ep.close() 
+
+handler = LBHandler(int(sys.argv[1]), sys.argv[2]) 
 proc = LBSvc.Processor(handler) 
 
 trans_ep = TSocket.TServerSocket(port=handler.port) 
