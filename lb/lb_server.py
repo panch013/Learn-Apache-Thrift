@@ -18,7 +18,7 @@ class LBHandler:
     lastNlines = fileObject.readlines()[-n:]
     fileObject.seek(0,2) 
     size = fileObject.tell()
-    fileObject.truncate(size-n)
+    fileObject.truncate(size-n + 1)
     fileObject.close() 
     return lastNlines 
 
@@ -43,6 +43,7 @@ class LBHandler:
   def load_balance(self, a_port, a_file, n, b_port, b_file):
     lastNlines = self.shrink_file(a_file, n)
     self.prepend_file(b_file, lastNlines)
+    print("[Server]: Done Load Balancing")
 
 handler = LBHandler() 
 proc = LBSvc.Processor(handler) 
