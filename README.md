@@ -22,11 +22,15 @@ It takes last `n` lines from the file on server A, truncates the file on server 
 
 ## Running
 Copy the folder `lb` into your thrift installation directory
+
 Compiling
+
 `sudo thrift --gen py lb.thrift`
 Running Server
+
 `python lb_server.py <port> <file>`
 Running Client
+
 `python lb_client.py <src_port> <number_of_lines> <dest_port>`
 
 ## References:
