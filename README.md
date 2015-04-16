@@ -1,7 +1,7 @@
 Learn-Apache-Thrift
 ===================
 
-This Python Module implements a simple load balancer using Apache Thrift
+This Python Module implements a simple load balancer using Apache Thrift.
 All the files can be found in `lb/` directory
 
 ## Overview:
