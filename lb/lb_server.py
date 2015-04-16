@@ -32,11 +32,10 @@ class LBHandler:
       if i >= (num_lines - n):
         lastNlines.append(line)
       
-    fileObject = open(self.file_, "rw+")
-
+    fileObject.seek(0)
     for line in lines:
       fileObject.write(line)
-
+    fileObject.truncate()
     fileObject.close() 
 
     print("[Server]: Done Shrinking")
