@@ -11,8 +11,8 @@ class LBHandler:
     self.port = port
     self.file_ = file_
 
-  def shrink_file(self, n):
-    print("[Server]: Handling Shrink request")
+  def get_lines(self, n):
+    print("[Server]: Getting last N lines")
    
     try:
       fileObject = open(self.file_, "rw+")
@@ -36,7 +36,23 @@ class LBHandler:
     for i, line in enumerate(fileObject):
       if i >= (num_lines - n):
         lastNlines.append(line)
-      
+   
+    info = []
+    info.append(lastNlines) 
+    info.append(num_lines)
+    print("[Server]: Got Last N Lines")
+    return info 
+
+  def shrink_file(self, n, num_lines):
+    print("[Server]: Handling Shrink request")
+   
+    if n > num_lines:
+      n = num_lines
+      # File doesn't contain any lines
+    if num_lines == 0:
+      print("[Server]: The File has 0 lines. Nothing to Shrink in the File: ", self.file_)
+      return None
+    
     with open(self.file_, "r+") as fileObject:
       for x in xrange(num_lines - n):
         fileObject.readline()
@@ -44,7 +60,6 @@ class LBHandler:
     fileObject.close() 
 
     print("[Server]: Done Shrinking")
-    return lastNlines 
 
   def prepend_file(self, lastNlines): 
     print("[Server]: Handling Prepend request")
@@ -69,7 +84,11 @@ class LBHandler:
     print("[Server]: Done Prepending")
 
   def load_balance(self, n, b_port):
-    lastNlines = self.shrink_file(n)
+    info = self.get_lines(n)
+    lastNlines = info[0]
+    num_lines = int(info[1]) 
+    self.shrink_file(n, num_lines)
+    print "[Server]: lines:", num_lines
     if lastNlines == None:
       print("[Server]: Nothing to Load Balance") 
       return
