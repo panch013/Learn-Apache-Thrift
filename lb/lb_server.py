@@ -11,6 +11,11 @@ class LBHandler:
     self.port = port
     self.file_ = file_
 
+  '''
+  Function: get_lines
+  argumnets : number of lines to get
+  return: last N lines and number of lines in the file
+  '''
   def get_lines(self, n):
     print("[Server]: Getting last N lines")
    
@@ -20,13 +25,15 @@ class LBHandler:
       num_lines = 0
       fileObject = open(self.file_, "rw+")
       num_lines = sum(1 for line in fileObject) 
-      # If the number of lines to be transferred are
-      # more then the number of lines in the file, 
-      # transfer all the lines
+      '''
+      If the number of lines to be transferred are
+      more then the number of lines in the file, 
+      transfer all the lines
+      '''
       if n > num_lines:
         n = num_lines
-      # File doesn't contain any lines
       if num_lines == 0:
+        # File doesn't contain any lines
         print("[Server]: The File has 0 lines. Nothing to Shrink in the File: %s" % self.file_)
         info.append(lastNlines) 
         info.append(num_lines)
@@ -48,13 +55,18 @@ class LBHandler:
     print("[Server]: Got Last N Lines")
     return info 
 
+  '''
+  Function: shrink_file
+  argumnets : number of lines to get and total number of lines in the file
+  return: Nothing
+  '''
   def shrink_file(self, n, num_lines):
     print("[Server]: Handling Shrink request")
    
     if n > num_lines:
       n = num_lines
-      # File doesn't contain any lines
     if num_lines == 0:
+      # File doesn't contain any lines
       print("[Server]: The File has 0 lines. Nothing to Shrink in the File: %s" % self.file_)
       return
     
@@ -66,6 +78,11 @@ class LBHandler:
 
     print("[Server]: Done Shrinking")
 
+  '''
+  Function: prepend_file
+  argumnets : last N lines from the file on the first server 
+  return: Nothing
+  '''
   def prepend_file(self, lastNlines): 
     print("[Server]: Handling Prepend request")
     if len(lastNlines) == 0:
@@ -89,6 +106,12 @@ class LBHandler:
     fileObject.close()
     print("[Server]: Done Prepending")
 
+  '''
+  Function: load_balance
+  argumnets : number of lines to shrink the file on Server A and Server B port
+              on which the the last 'n' lines from Server A will be prepended 
+  return: Nothing
+  '''
   def load_balance(self, n, b_port):
     info = self.get_lines(n)
     lastNlines = info[0]
