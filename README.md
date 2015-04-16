@@ -23,7 +23,7 @@ It takes last `n` lines from the file on server A, truncates the file on server 
 ## Running
 Copy the folder `lb` into your thrift installation directory
 
-Compiling
+Creating Service stubs
 
 `sudo thrift --gen py lb.thrift`
 
