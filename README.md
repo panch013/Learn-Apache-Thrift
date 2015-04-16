@@ -15,6 +15,6 @@ It's a client server program. 2 instances of the servers must be running before 
 ## What does Load Balance do?
 It takes last `n` lines from the file on server A, truncates the file on server A and sends these `n` lines to server B, prepends these `n` lines to the file on server B.
 
-References:
+## References:
 * http://www.manning.com/abernethy/tPGtApacheThrift_MEAP_ch1.pdf
 * http://thrift-tutorial.readthedocs.org/en/latest/usage-example.html
