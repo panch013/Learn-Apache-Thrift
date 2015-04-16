@@ -15,29 +15,34 @@ class LBHandler:
     print("[Server]: Getting last N lines")
    
     try:
+      info = []
+      lastNlines = []   
+      num_lines = 0
       fileObject = open(self.file_, "rw+")
       num_lines = sum(1 for line in fileObject) 
       # If the number of lines to be transferred are
       # more then the number of lines in the file, 
-      # transfer the all the lines
+      # transfer all the lines
       if n > num_lines:
         n = num_lines
       # File doesn't contain any lines
       if num_lines == 0:
-        print("[Server]: The File has 0 lines. Nothing to Shrink in the File: ", self.file_)
-        return None
+        print("[Server]: The File has 0 lines. Nothing to Shrink in the File: %s" % self.file_)
+        info.append(lastNlines) 
+        info.append(num_lines)
+        return info 
       print("[Server]: File Opened: ", self.file_)
     except IOError:
       print ("[Server]: File '%s' Does not Exist" % self.file_)
-      return None
+      info.append(lastNlines) 
+      info.append(num_lines)
+      return info 
  
-    lastNlines = []   
     fileObject = open(self.file_, "rw+")
     for i, line in enumerate(fileObject):
       if i >= (num_lines - n):
         lastNlines.append(line)
    
-    info = []
     info.append(lastNlines) 
     info.append(num_lines)
     print("[Server]: Got Last N Lines")
@@ -50,8 +55,8 @@ class LBHandler:
       n = num_lines
       # File doesn't contain any lines
     if num_lines == 0:
-      print("[Server]: The File has 0 lines. Nothing to Shrink in the File: ", self.file_)
-      return None
+      print("[Server]: The File has 0 lines. Nothing to Shrink in the File: %s" % self.file_)
+      return
     
     with open(self.file_, "r+") as fileObject:
       for x in xrange(num_lines - n):
@@ -69,7 +74,6 @@ class LBHandler:
     try:
       old_data = None
       fileObject = open(self.file_, "rw+")
-      print("[Server]: File Opened: ", self.file_)
       old_data = fileObject.read() 
       fileObject.close()
     except IOError:
@@ -89,9 +93,8 @@ class LBHandler:
     info = self.get_lines(n)
     lastNlines = info[0]
     num_lines = int(info[1]) 
-    self.shrink_file(n, num_lines)
-    print "[Server]: lines:", num_lines
-    if lastNlines == None:
+
+    if len(lastNlines) == 0:
       print("[Server]: Nothing to Load Balance") 
       return
 
@@ -103,7 +106,10 @@ class LBHandler:
     print ("[Server]: Established Connection with port: ", b_port)
     
     client.prepend_file(lastNlines)   
- 
+
+    # Shrink the File only if the prepend is successful
+    self.shrink_file(n, num_lines)
+
     print("[Server]: Done Load Balancing")
     trans_ep.close() 
 
