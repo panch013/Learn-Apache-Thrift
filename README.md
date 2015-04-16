@@ -35,6 +35,26 @@ Running Client
 
 `python lb_client.py <src_port> <number_of_lines> <dest_port>`
 
+## Testing
+Create Big Files
+
+`dd if=/dev/urandom of=a.txt bs=1048576 count=1000` # This creates 1GB File
+
+`dd if=/dev/urandom of=b.txt bs=1048576 count=10` # This creates 10MB File
+
+Start Server A with port number of your choice (say 9095 in this case) and the file of possission a.txt
+
+`python lb_server.py 9095 a.txt` 
+
+Start Server B with port number of your choice (say 9096 in this case) and the file of possission b.txt
+
+`python lb_server.py 9096 b.txt` 
+
+Start Client and speicify source port number, number of lines to transfer from a.txt to b.txt, and destination port number
+
+`python lb_client.py 9095 10 9096`
+
+
 ## References:
 * http://www.manning.com/abernethy/tPGtApacheThrift_MEAP_ch1.pdf
 * http://thrift-tutorial.readthedocs.org/en/latest/usage-example.html
