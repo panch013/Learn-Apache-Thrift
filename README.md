@@ -10,8 +10,7 @@ It's a client server program. 2 instances of the servers must be running before 
 
 ## Logical Diagram
 client --------> Server A ------> Server B
-
-
+       
        <-----------|<----------------|
 
 ## Services Implemented:
