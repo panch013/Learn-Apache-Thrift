@@ -24,24 +24,23 @@ class LBHandler:
         n = num_lines
       # File doesn't contain any lines
       if num_lines == 0:
+        print("[Server]: The File has 0 lines. Nothing to Shrink in the File: ", self.file_)
         return None
       print("[Server]: File Opened: ", self.file_)
     except IOError:
-      print ("[Server]: File '{self.file_}' Does not Exist")
+      print ("[Server]: File '%s' Does not Exist" % self.file_)
+      return None
  
     lastNlines = []   
-    lines = []   
     fileObject = open(self.file_, "rw+")
     for i, line in enumerate(fileObject):
-      if i < (num_lines - n):
-        lines.append(line)
       if i >= (num_lines - n):
         lastNlines.append(line)
       
-    fileObject.seek(0)
-    for line in lines:
-      fileObject.write(line)
-    fileObject.truncate()
+    with open(self.file_, "r+") as fileObject:
+      for x in xrange(num_lines - n):
+        fileObject.readline()
+      fileObject.truncate()
     fileObject.close() 
 
     print("[Server]: Done Shrinking")
@@ -58,9 +57,9 @@ class LBHandler:
       old_data = fileObject.read() 
       fileObject.close()
     except IOError:
-      print ("[Server]: File '{self.file_}' Does not Exist")
-      print ("[Server]: Opening a new File '{self.file_}'")
-      fileObject = open(self.file_, "w")
+      print ("[Server]: File '%s' Does not Exist" % self.file_)
+      print ("[Server]: Opening a new File with the name '%s'" % self.file_)
+      fileObject = open(self.file_, "w+")
 
     fileObject = open(self.file_, "rw+")
     for line in lastNlines:
