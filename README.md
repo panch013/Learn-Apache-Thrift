@@ -2,6 +2,7 @@ Learn-Apache-Thrift
 ===================
 
 This Python Module implements a simple load balancer using Apache Thrift.
+
 All the files can be found in `lb/` directory
 
 ## Overview:
@@ -9,6 +10,7 @@ It's a client server program. 2 instances of the servers must be running before 
 
 ## Logical Diagram
 client --------> Server A ------> Server B
+
        <-----------|<----------------|
 
 ## Services Implemented:
