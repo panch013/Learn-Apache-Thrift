@@ -20,6 +20,15 @@ client <-------- Server A <------ Server B
 ## What does Load Balance do?
 It takes last `n` lines from the file on server A, truncates the file on server A and sends these `n` lines to server B, prepends these `n` lines to the file on server B.
 
+## Running
+Copy the folder `lb` into your thrift installation directory
+Compiling
+`sudo thrift --gen py lb.thrift`
+Running Server
+`python lb_server.py <port> <file>`
+Running Client
+`python lb_client.py <src_port> <number_of_lines> <dest_port>`
+
 ## References:
 * http://www.manning.com/abernethy/tPGtApacheThrift_MEAP_ch1.pdf
 * http://thrift-tutorial.readthedocs.org/en/latest/usage-example.html
