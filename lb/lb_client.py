@@ -6,15 +6,15 @@ from thrift.transport import TSocket
 from thrift.transport import TTransport 
 from thrift.protocol import TBinaryProtocol 
 
-trans_ep = TSocket.TSocket("localhost", 9095) 
+if len(sys.argv) < 4:
+  print("[Client]: Usage # python lb_client.py <src_port> <num_of_lines> <dest_port>")
+  sys.exit(2)
+trans_ep = TSocket.TSocket("localhost", int(sys.argv[1])) 
 trans_buf = TTransport.TBufferedTransport(trans_ep) 
 proto = TBinaryProtocol.TBinaryProtocol(trans_buf) 
 client = LBSvc.Client(proto) 
 trans_ep.open() 
-#msg = client.shrink_file("a.txt", 2) 
-#print("[Client]: received: %s" % msg) 
-#client.prepend_file("b.txt", msg)
-#print("[Clinet]: File prepended")
-client.load_balance(9095, 2, 9096)
+client.load_balance(int(sys.argv[2]), int(sys.argv[3]))
 print("[Client]: Done Load Balancing")
 trans_ep.close() 
+

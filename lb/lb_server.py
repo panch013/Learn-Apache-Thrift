@@ -13,16 +13,22 @@ class LBHandler:
 
   def shrink_file(self, n):
     print("[Server]: Handling Shrink request")
+   
     try:
       fileObject = open(self.file_, "rw+")
+      num_lines = sum(1 for line in fileObject) 
+      # If the number of lines to be transferred are
+      # more then the number of lines in the file, 
+      # transfer the all the lines
+      if n > num_lines:
+        n = num_lines
+      # File doesn't contain any lines
+      if num_lines == 0:
+        return None
       print("[Server]: File Opened: ", self.file_)
     except IOError:
       print ("[Server]: File '{self.file_}' Does not Exist")
  
-    #allLines =  fileObject.readlines()
-    #lastNlines = allLines[-n:]
-    num_lines = sum(1 for line in fileObject) 
-    print("[Server]: Lines in the file: ", num_lines, n)
     lastNlines = []   
     lines = []   
     fileObject = open(self.file_, "rw+")
@@ -43,6 +49,9 @@ class LBHandler:
 
   def prepend_file(self, lastNlines): 
     print("[Server]: Handling Prepend request")
+    if len(lastNlines) == 0:
+      print("[Server]: Nothing to prepend")
+      return
     try:
       fileObject = open(self.file_, "rw+")
       print("[Server]: File Opened: ", self.file_)
@@ -60,12 +69,12 @@ class LBHandler:
     fileObject.close()
     print("[Server]: Done Prepending")
 
-  #TODO Remove a_port?
-  def load_balance(self, a_port, n, b_port):
+  def load_balance(self, n, b_port):
     lastNlines = self.shrink_file(n)
+    if lastNlines == None:
+      print("[Server]: Nothing to Load Balance") 
+      return
 
-    print("[Server]: lastNlines")
-    print lastNlines
     trans_ep = TSocket.TSocket("localhost", b_port) 
     trans_buf = TTransport.TBufferedTransport(trans_ep) 
     proto = TBinaryProtocol.TBinaryProtocol(trans_buf) 
@@ -78,6 +87,9 @@ class LBHandler:
     print("[Server]: Done Load Balancing")
     trans_ep.close() 
 
+if len(sys.argv) < 3:
+  print("[Server]: Usage # python lb_server.py <port> <file>")
+  sys.exit(2)
 handler = LBHandler(int(sys.argv[1]), sys.argv[2]) 
 proc = LBSvc.Processor(handler) 
 

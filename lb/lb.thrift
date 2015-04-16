@@ -6,5 +6,5 @@ service LBSvc {
  # Prepend file by 'n' number of lines
  void prepend_file(1:list<string> lastNlines),
  # Shrink file on server A and prepend file on server B 
- void load_balance(1:i32 a_port, 2:i32 n, 3:i32 b_port),
+ void load_balance(1:i32 n, 2:i32 b_port),
 }
