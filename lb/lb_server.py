@@ -67,6 +67,7 @@ class LBHandler:
       print("[Server]: Nothing to prepend")
       return
     try:
+      old_data = None
       fileObject = open(self.file_, "rw+")
       print("[Server]: File Opened: ", self.file_)
       old_data = fileObject.read() 
@@ -79,7 +80,8 @@ class LBHandler:
     fileObject = open(self.file_, "rw+")
     for line in lastNlines:
       fileObject.write(line)
-    fileObject.write(old_data)
+    if old_data:
+      fileObject.write(old_data)
     fileObject.close()
     print("[Server]: Done Prepending")
 
