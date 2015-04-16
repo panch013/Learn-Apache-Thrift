@@ -1,4 +1,4 @@
-import sys 
+import sys,os 
 sys.path.append("gen-py") 
 from lb import LBSvc 
 from thrift.transport import TSocket 
@@ -18,13 +18,27 @@ class LBHandler:
       print("[Server]: File Opened: ", self.file_)
     except IOError:
       print ("[Server]: File '{self.file_}' Does not Exist")
-   
-    lastNlines = fileObject.readlines()[-n:]
-    fileObject.seek(0,2) 
-    size = fileObject.tell()
-    print("[Server]: Size of the file: ", size)
-    fileObject.truncate(size-n)
+ 
+    #allLines =  fileObject.readlines()
+    #lastNlines = allLines[-n:]
+    num_lines = sum(1 for line in fileObject) 
+    print("[Server]: Lines in the file: ", num_lines, n)
+    lastNlines = []   
+    lines = []   
+    fileObject = open(self.file_, "rw+")
+    for i, line in enumerate(fileObject):
+      if i < (num_lines - n):
+        lines.append(line)
+      if i >= (num_lines - n):
+        lastNlines.append(line)
+      
+    fileObject = open(self.file_, "rw+")
+
+    for line in lines:
+      fileObject.write(line)
+
     fileObject.close() 
+
     print("[Server]: Done Shrinking")
     return lastNlines 
 
