@@ -13,8 +13,7 @@ client --------> Server A ------> Server B <br />
 client <-------- Server A <------ Server B
 
 ## Services Implemented
-* get_lines
-* shrink_file
+* get_file
 * prepend_file
 * load_balance
 
