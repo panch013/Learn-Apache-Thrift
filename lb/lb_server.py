@@ -1,5 +1,5 @@
-import sys,os 
-from shutil import copy
+import sys,os,tempfile 
+from shutil import copy,copy2,copyfileobj
 from itertools import islice, chain 
 sys.path.append("gen-py") 
 from lb import LBSvc 
@@ -25,51 +25,29 @@ class LBHandler:
   return: last N lines and number of lines in the file
   '''
   def get_file(self, n):
-    print("[Server]: Splitting file into two files")
+    print("[Server]: Handling Shrink Request")
     try:
-      #TODO: Handle error cases
-      #TODO: Delete out_1, out_2
+      if n == 0:
+        return None
       with open(self.file_, 'rb') as source:
-        with open('out_1', 'wb') as out1:
+        with tempfile.NamedTemporaryFile() as out1:
           for i, line in enumerate(source):
            out1.write(line)
            if i == n-1:
              break
+          out1.seek(0)
+          # Return a file in a binary format. 
+          # In future, divide it in chunks(system specific)
+          lastNlines_bin = out1.read()
         with open('out_2', 'wb') as out2:
           out2.writelines(source)  
-        # Shrinking the file here
-        copy("out_2", self.file_)
+        os.rename('out_2', self.file_)
     except IOError:
       print("[Server]: File %s doesn't exist" % self.file_)
       return None
     
-    #TODO: Return a file in a binary format. In future, divide it in chunks
-    with open('out_1', 'rb') as out1:
-      print("[Server]: Done with splitting")
-      return out1.read() 
-
-  '''
-  Function: shrink_file
-  argumnets : number of lines to get and total number of lines in the file
-  return: Nothing
-  '''
-  def shrink_file(self, n, num_lines):
-    print("[Server]: Handling Shrink request")
-   
-    if n > num_lines:
-      n = num_lines
-    if num_lines == 0:
-      # File doesn't contain any lines
-      print("[Server]: The File has 0 lines. Nothing to Shrink in the File: %s" % self.file_)
-      return
-    
-    with open(self.file_, "r+") as fileObject:
-      for x in xrange(num_lines - n):
-        fileObject.readline()
-      fileObject.truncate()
-    fileObject.close() 
-
-    print("[Server]: Done Shrinking")
+    print("[Server]: Done with splitting")
+    return lastNlines_bin 
 
   '''
   Function: prepend_file_list
@@ -102,10 +80,10 @@ class LBHandler:
     print("[Server]: Handling Prepend request")
     try:
       with open(self.file_, 'rb') as infile, open("tmpfile", 'wb+') as outfile:
-        #TODO: Handle Chunks here
+        # In future, Handle Chunks here
         outfile.write(lastNlines_bin)
         outfile.write(infile.read())
-      copy("tmpfile", self.file_)
+      os.rename("tmpfile", self.file_)
     except IOError:
       print ("[Server]: File '%s' Does not Exist" % self.file_)
       print ("[Server]: Opening a new File with the name '%s'" % self.file_)
@@ -121,15 +99,10 @@ class LBHandler:
   return: Nothing
   '''
   def load_balance(self, n, b_port):
-    #lastNlines = self.get_lines(n)
     lastNlines_bin = self.get_file(n)
-    '''
-    num_lines = len(lastNlines) 
-
-    if len(lastNlines) == 0:
-      print("[Server]: Nothing to Load Balance") 
+    if lastNlines_bin == None:
+      print("[Server]: Nothing to load balance") 
       return
-    '''
 
     trans_ep = TSocket.TSocket("localhost", b_port) 
     trans_buf = TTransport.TBufferedTransport(trans_ep) 
@@ -138,11 +111,7 @@ class LBHandler:
     trans_ep.open() 
     print ("[Server]: Established Connection with port: %s" % b_port)
     
-    #client.prepend_file(lastNlines)   
     client.prepend_file(lastNlines_bin)   
-
-    # Shrink the File only if the prepend is successful
-    #self.shrink_file(n, num_lines)
 
     print("[Server]: Done Load Balancing")
     trans_ep.close() 

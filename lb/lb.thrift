@@ -6,9 +6,6 @@ service LBSvc {
  # Get File in binary format
  binary get_file(1:i32 n),
 
- # Shrink file by 'n' number of lines 
- void shrink_file(1:i32 n, 2:i32 num_lines),
-
  # Prepend file by 'n' number of lines using list
  void prepend_file_list(1:list<string> lastNlines),
  
