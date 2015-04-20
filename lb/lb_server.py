@@ -46,7 +46,7 @@ class LBHandler:
       print("[Server]: File %s doesn't exist" % self.file_)
       return None
     
-    print("[Server]: Done with splitting")
+    print("[Server]: Done Shrinking. File Sent.")
     return lastNlines_bin 
 
   '''
