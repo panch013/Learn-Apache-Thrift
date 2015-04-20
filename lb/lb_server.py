@@ -81,8 +81,10 @@ class LBHandler:
     try:
       with open(self.file_, 'rb') as infile, open("tmpfile", 'wb+') as outfile:
         # In future, Handle Chunks here
-        outfile.write(lastNlines_bin)
-        outfile.write(infile.read())
+        #outfile.write(lastNlines_bin)
+        outfile.writelines(line for line in lastNlines_bin)
+        #outfile.write(infile.read())
+        outfile.writelines(line for line in infile)
       os.rename("tmpfile", self.file_)
     except IOError:
       print ("[Server]: File '%s' Does not Exist" % self.file_)
