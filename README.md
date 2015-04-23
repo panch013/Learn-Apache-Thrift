@@ -57,7 +57,7 @@ Start Client and speicify source port number, number of lines to transfer from a
 
 ## References:
 * http://www.manning.com/abernethy/tPGtApacheThrift_MEAP_ch1.pdf
-* http://thrift-tutorial.readthedocs.org/en/latest/usage-example.html
+* [ImportError: No module named Thrift] http://thrift-tutorial.readthedocs.org/en/latest/usage-example.html
 * http://stackoverflow.com/questions/11645876/how-to-efficiently-append-a-new-line-to-the-starting-of-a-large-file
 * http://stackoverflow.com/questions/11020935/how-do-i-split-one-file-into-two-files-using-python
 * http://stackoverflow.com/questions/11020935/how-do-i-split-one-file-into-two-files-using-python
