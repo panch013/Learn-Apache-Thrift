@@ -14,6 +14,12 @@ def lineno():
     """Returns the current line number in our program."""
     return inspect.currentframe().f_back.f_lineno
 
+def file_len(fname):
+    with open(fname) as f:
+        for i, l in enumerate(f):
+            pass
+    return i + 1
+
 class LBHandler: 
   def __init__(self, port, file_):
     self.port = port
@@ -29,19 +35,22 @@ class LBHandler:
     try:
       if n == 0:
         return None
+      num_lines = file_len(self.file_)
+      first_split_len = num_lines - n
       with open(self.file_, 'rb') as source:
-        with tempfile.NamedTemporaryFile() as out1:
+        with open('out_1', 'wb') as out1:
           for i, line in enumerate(source):
            out1.write(line)
-           if i == n-1:
+           if i == first_split_len-1:
              break
-          out1.seek(0)
           # Return a file in a binary format. 
           # In future, divide it in chunks(system specific)
-          lastNlines_bin = out1.read()
         with open('out_2', 'wb') as out2:
           out2.writelines(source)  
-        os.rename('out_2', self.file_)
+        with open('out_2', 'rb') as out2:
+          lastNlines_bin = out2.read()
+        os.rename('out_1', self.file_)
+        os.remove('out_2')
     except IOError:
       print("[Server]: File %s doesn't exist" % self.file_)
       return None
