@@ -1,0 +1,49 @@
+    1  ls
+    2  sudo apt-get install libboost-dev libboost-test-dev libboost-program-options-dev libboost-system-dev libboost-filesystem-dev libevent-dev automake libtool flex bison pkg-config g++ libssl-dev
+    3  sudo apt-get update
+    4  sudo apt-get install libboost-dev libboost-test-dev libboost-program-options-dev libboost-system-dev libboost-filesystem-dev libevent-dev automake libtool flex bison pkg-config g++ libssl-dev
+    5  ls
+    6  javac
+    7  sudo apt-get install openjdk-7-jdk
+    8  python
+    9  ls
+   10  wget http://www.apache.org/dyn/closer.cgi?path=/thrift/0.9.2/thrift-0.9.2.tar.gz
+   11  ls
+   12  rm -f closer.cgi\?path\=%2Fthrift%2F0.9.2%2Fthrift-0.9.2.tar.gz 
+   13  ls
+   14  wget http://mirror.nexcess.net/apache/thrift/0.9.2/thrift-0.9.2.tar.gz
+   15  ls
+   16  tar xf thrift-0.9.2.tar.gz 
+   17  ls
+   18  cd thrift-0.9.2/
+   19  ls
+   20  sudo ./configure
+   21  sudo make
+   22  make
+   23  sudo apt-get install make
+   24  sudo make
+   25  ls
+   26  sudo make install
+   27  thrift -version
+   28  ls
+   29  cd lib/py/
+   30  ls
+   31  sudo python setup.py install
+   32  cd ..
+   33  ls
+   34  cd ..
+   35  ls
+   36  sudo apt-get install git
+   37  git clone https://github.com/panch013/Learn-Apache-Thrift.git
+   38  ls
+   39  cd Learn-Apache-Thrift/
+   40  ls
+   41  cd lb/
+   42  ls
+   43  sudo thrift --gen py lb.thrift 
+   44  ls
+   45  cat a.txt 
+   46  cat b.txt 
+   47  python lb_server.py 9095 a.txt 
+   48  history
+   49  history > setup_cmds
